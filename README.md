@@ -45,3 +45,8 @@ Endpoints
 | 400515	    |       20400952	|    1789.21    |
 
 - To add more accounts to initial, add insert statement to `src/main/resources/scripts/data.sql` and restart the application.
+
+Notes and Assumptions:
+- Assume that account CRUD API is part of different project and an updated account's balance could be seen through this API.
+- Project has end-to-end tests which are in BDD format, and `src/test/resources/Feature/TransferController.feature` file includes a few scenarios.
+Account's balance update and verification is part of these tests, since this service does not have any account API.

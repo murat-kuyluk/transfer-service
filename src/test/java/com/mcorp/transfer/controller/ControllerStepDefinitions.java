@@ -80,29 +80,8 @@ public class ControllerStepDefinitions {
                 anAccountDto().withNumber(TO_ACCOUNT_NUMBER).withSortCode(TO_SORT_CODE).build());
     }
 
-    private void makeRequest(double amount, AccountDto to, AccountDto from) throws IOException {
-        TransferRequest transferRequest = TransferRequest.TransferRequestBuilder.aTransferRequest()
-                .withTo(to)
-                .withFrom(from)
-                .withNote("Automated transfer")
-                .withAmount(BigDecimal.valueOf(amount))
-                .build();
-
-        String request = gson.toJson(transferRequest);
-
-        HttpUriRequest httpUriRequest = RequestBuilder.post(TRANSFER_SVC_URL)
-                .setEntity(new StringEntity(request))
-                .addHeader("Accept", APPLICATION_JSON)
-                .addHeader("Content-type", APPLICATION_JSON)
-                .build();
-
-        CloseableHttpClient client = HttpClients.createDefault();
-
-        response = client.execute(httpUriRequest);
-    }
-
     @Then("^from account's balance should have been £(.+)$")
-    public void from_account_s_balance_should_have_been_£(double balance) throws Throwable {
+    public void from_account_s_balance_should_have_been_£(double balance) {
         BigDecimal actualBalance = accountDao.findAccountByNumberAndSortCode(TO_ACCOUNT_NUMBER, TO_SORT_CODE)
                 .map(Account::getBalance)
                 .get();
@@ -110,7 +89,7 @@ public class ControllerStepDefinitions {
     }
 
     @Then("^to account's balance should have been £(.+)$")
-    public void to_account_s_balance_should_have_been_£(double balance) throws Throwable {
+    public void to_account_s_balance_should_have_been_£(double balance) {
         BigDecimal actualBalance = accountDao.findAccountByNumberAndSortCode(FROM_ACCOUNT_NUMBER, FROM_SORT_CODE)
                 .map(Account::getBalance)
                 .get();
@@ -202,4 +181,25 @@ public class ControllerStepDefinitions {
         assertThat(transferResponse.getMessage()).isEqualTo("Transfer not found for given id 999");
     }
 
+
+    private void makeRequest(double amount, AccountDto to, AccountDto from) throws IOException {
+        TransferRequest transferRequest = TransferRequest.TransferRequestBuilder.aTransferRequest()
+                .withTo(to)
+                .withFrom(from)
+                .withNote("Automated transfer")
+                .withAmount(BigDecimal.valueOf(amount))
+                .build();
+
+        String request = gson.toJson(transferRequest);
+
+        HttpUriRequest httpUriRequest = RequestBuilder.post(TRANSFER_SVC_URL)
+                .setEntity(new StringEntity(request))
+                .addHeader("Accept", APPLICATION_JSON)
+                .addHeader("Content-type", APPLICATION_JSON)
+                .build();
+
+        CloseableHttpClient client = HttpClients.createDefault();
+
+        response = client.execute(httpUriRequest);
+    }
 }
